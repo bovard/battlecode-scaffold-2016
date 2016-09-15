@@ -28,25 +28,23 @@ public class RobotPlayer {
         Team myTeam = rc.getTeam();
         Team enemyTeam = myTeam.opponent();
 
-        if (rc.getType() == RobotType.ARCHON) {
-            while (true) {
-                // This is a loop to prevent the run() method from returning. Because of the Clock.yield()
-                // at the end of it, the loop will iterate once per game round.
-                try {
-                    if (rc.isCoreReady()) {
-                        if ( taskStatus != RobotTasks.TASK_IN_PROGRESS ) {
-                            assignment = AssignmentManager.getAssignment(rc, rand);
-                            taskStatus = RobotTasks.TASK_IN_PROGRESS;
-                            rc.setIndicatorString(0, "Received a task");
-                        } else {
-                            taskStatus = RobotTasks.pursueTask(rc, assignment);
-                        }
+        while (true) {
+            // This is a loop to prevent the run() method from returning. Because of the Clock.yield()
+            // at the end of it, the loop will iterate once per game round.
+            try {
+                if (rc.isCoreReady()) {
+                    if ( taskStatus != RobotTasks.TASK_IN_PROGRESS ) {
+                        assignment = AssignmentManager.getAssignment(rc, rand);
+                        taskStatus = RobotTasks.TASK_IN_PROGRESS;
+                        rc.setIndicatorString(0, "Received a task");
+                    } else {
+                        taskStatus = RobotTasks.pursueTask(rc, assignment);
                     }
-                    Clock.yield();
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    e.printStackTrace();
                 }
+                Clock.yield();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
