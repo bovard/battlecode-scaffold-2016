@@ -17,49 +17,29 @@ public class RobotPlayer {
                 Direction.SOUTH, Direction.SOUTH_WEST, Direction.WEST, Direction.NORTH_WEST};
         RobotType[] robotTypes = {RobotType.SCOUT, RobotType.SOLDIER, RobotType.SOLDIER, RobotType.SOLDIER,
                 RobotType.GUARD, RobotType.GUARD, RobotType.VIPER, RobotType.TURRET};
+
         Random rand = new Random(rc.getID());
+
         int myAttackRange = 0;
         int searchRadius = 10;
         int taskStatus = RobotTasks.TASK_NOT_GIVEN;
-        Direction dirToMove = Direction.NORTH;
-        MapLocation targetLocation = rc.getLocation();
+        Assignment assignment = null;
+
         Team myTeam = rc.getTeam();
         Team enemyTeam = myTeam.opponent();
 
         if (rc.getType() == RobotType.ARCHON) {
-            try {
-                // Any code here gets executed exactly once at the beginning of the game.
-            } catch (Exception e) {
-                // Throwing an uncaught exception makes the robot die, so we need to catch exceptions.
-                // Caught exceptions will result in a bytecode penalty.
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
-
             while (true) {
                 // This is a loop to prevent the run() method from returning. Because of the Clock.yield()
                 // at the end of it, the loop will iterate once per game round.
                 try {
                     if (rc.isCoreReady()) {
                         if ( taskStatus != RobotTasks.TASK_IN_PROGRESS ) {
-                            // Find closest part and go toward it
+                            assignment = AssignmentManager.getAssignment(rc, rand);
                             taskStatus = RobotTasks.TASK_IN_PROGRESS;
-                            MapLocation[] partLocations = rc.sensePartLocations(searchRadius);
-                            if (partLocations.length < 1) {
-                                searchRadius *= 10;
-                                MapLocation rcLoc = rc.getLocation();
-                                targetLocation = new MapLocation(rcLoc.x + rand.nextInt(10) - 5,rcLoc.y + rand.nextInt(10) - 5);
-                            }
-                            int minPartDist = 9999999;
-                            for (int i = 0; i < partLocations.length; i++) {
-                                int partDist = rc.getLocation().distanceSquaredTo(partLocations[i]);
-                                if (partDist < minPartDist) {
-                                    minPartDist = partDist;
-                                    targetLocation = partLocations[i];
-                                }
-                            }
+                            rc.setIndicatorString(0, "Received a task");
                         } else {
-                            taskStatus = RobotTasks.moveToLocation(rc, targetLocation);
+                            taskStatus = RobotTasks.pursueTask(rc, assignment);
                         }
                     }
                     Clock.yield();

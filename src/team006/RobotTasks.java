@@ -12,9 +12,23 @@ public class RobotTasks {
     public static int TASK_COMPLETE = 1;
     public static int TASK_ABANDONED = 2;
 
+    public static int pursueTask(RobotController rc, Assignment assignment) {
+        rc.setIndicatorString(0, "pursuing my task");
+        try {
+            if ( assignment.assignmentType == AssignmentManager.ARCH_COLLECT_PARTS ) {
+                return moveToLocation(rc, assignment.targetLocation);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return TASK_NOT_GIVEN;
+    }
+
     // Move toward a location
     public static int moveToLocation(RobotController rc, MapLocation targetLocation) {
         try {
+            rc.setIndicatorString(0, "moving to Location");
             Direction dirToMove = rc.getLocation().directionTo(targetLocation);
             if (rc.canMove(dirToMove)) {
                 rc.move(dirToMove);
