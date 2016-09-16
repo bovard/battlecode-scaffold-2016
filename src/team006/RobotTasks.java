@@ -21,7 +21,7 @@ public class RobotTasks {
         rc.setIndicatorString(0, "pursuing my task");
         try {
             if ( assignment.assignmentType == AssignmentManager.ARCH_COLLECT_PARTS ) {
-                return moveToLocation(rc, assignment.targetLocation);
+                return collectParts(rc, assignment.targetLocation, assignment.targetInt);
             } else if ( assignment.assignmentType == AssignmentManager.ARCH_BUILD_ROBOTS ){
                 return buildRobot(rc);
             } else if ( assignment.assignmentType == AssignmentManager.BOT_MOVE_TO_LOC ) {
@@ -57,6 +57,37 @@ public class RobotTasks {
             e.printStackTrace();
         }
         return TASK_IN_PROGRESS;
+    }
+
+    // Move toward a target location and collect parts in that area
+    // Complete task when rc is on target location and cannot detect any parts
+    public static int collectParts(RobotController rc, MapLocation targetLocation, int radius) {
+        MapLocation rcLocation = rc.getLocation();
+
+        if ( rcLocation.distanceSquaredTo(targetLocation) > radius ){
+            return moveToLocation(rc, targetLocation);
+        }
+
+        Direction dirToMove = null;
+        MapLocation[] partLocations = rc.sensePartLocations(RobotType.ARCHON.sensorRadiusSquared);
+        int minPartDist = 9999;
+
+        for (int i = 0; i < partLocations.length; i++) {
+            int partDist = rc.getLocation().distanceSquaredTo(partLocations[i]);
+            if (partDist < minPartDist && partLocations[i].distanceSquaredTo(targetLocation) <= radius) {
+                minPartDist = partDist;
+                dirToMove = rcLocation.directionTo(partLocations[i]);
+            }
+        }
+        if (dirToMove == null) {
+            if (rcLocation.equals(targetLocation)) {
+                return TASK_COMPLETE;
+            } else {
+                return moveToLocation(rc, targetLocation);
+            }
+        } else {
+            return moveToLocation(rc, targetLocation);
+        }
     }
 
     public static int buildRobot(RobotController rc) {
