@@ -8,9 +8,10 @@ import java.util.Random;
  * Created by andrewalbers on 9/14/16.
  */
 public class AssignmentManager {
-    public static int ARCH_COLLECT_PARTS = 1; //
-    public static int ARCH_BUILD_ROBOTS = 2;
+    public static int ARCH_COLLECT_PARTS = 1; // MapLocation
+    public static int ARCH_BUILD_ROBOTS = 2; // --
     public static int ARCH_ACTIVATE_NEUTRALS = 3;
+    public static int BOT_MOVE_TO_LOC = 4;
 
     public static Assignment getAssignment(RobotController rc, Random rand) {
 
@@ -19,7 +20,7 @@ public class AssignmentManager {
         MapLocation targetLocation = null;
 
         if ( rc.getType() == RobotType.ARCHON ) {
-            if (true) { // TODO: Add a condition to trigger this archon to collect parts
+            if ( Decision.doCollectParts(rc) ) { // TODO: Add a condition to trigger this archon to collect parts
 
                 assignmentType = ARCH_COLLECT_PARTS;
 
@@ -36,9 +37,42 @@ public class AssignmentManager {
                         targetLocation = partLocations[i];
                     }
                 }
+            } else {
+                assignmentType = ARCH_BUILD_ROBOTS;
             }
-        }
+        } else if ( rc.getType() == RobotType.SOLDIER ){
 
+            assignmentType = BOT_MOVE_TO_LOC;
+
+            MapLocation rcLoc = rc.getLocation();
+            targetLocation = new MapLocation(rcLoc.x + rand.nextInt(10) - 5, rcLoc.y + rand.nextInt(10) - 5);
+
+        } else if ( rc.getType() == RobotType.GUARD ){
+
+            assignmentType = BOT_MOVE_TO_LOC;
+
+            MapLocation rcLoc = rc.getLocation();
+            targetLocation = new MapLocation(rcLoc.x + rand.nextInt(10) - 5, rcLoc.y + rand.nextInt(10) - 5);
+
+        } else if ( rc.getType() == RobotType.SCOUT ){
+
+            assignmentType = BOT_MOVE_TO_LOC;
+
+            MapLocation rcLoc = rc.getLocation();
+            targetLocation = new MapLocation(rcLoc.x + rand.nextInt(10) - 5, rcLoc.y + rand.nextInt(10) - 5);
+
+        } else if ( rc.getType() == RobotType.VIPER ){
+
+            assignmentType = BOT_MOVE_TO_LOC;
+
+            MapLocation rcLoc = rc.getLocation();
+            targetLocation = new MapLocation(rcLoc.x + rand.nextInt(10) - 5, rcLoc.y + rand.nextInt(10) - 5);
+
+        } else if ( rc.getType() == RobotType.TURRET ){
+
+        } else if ( rc.getType() == RobotType.TTM ) {
+
+        }
         return new Assignment(targetId, assignmentType, targetLocation);
     }
 }
