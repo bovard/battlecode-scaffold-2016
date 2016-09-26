@@ -2,7 +2,7 @@ package team006;
 
 import battlecode.common.*;
 
-import java.util.Random;
+import java.util.*;
 
 public class RobotPlayer {
 
@@ -25,20 +25,27 @@ public class RobotPlayer {
         int taskStatus = RobotTasks.TASK_NOT_GIVEN;
         Assignment assignment = null;
 
-        Team myTeam = rc.getTeam();
-        Team enemyTeam = myTeam.opponent();
+        RobotType myType = rc.getType();
+        MapInfo mapInfo = new MapInfo(rc);
 
         while (true) {
             // This is a loop to prevent the run() method from returning. Because of the Clock.yield()
             // at the end of it, the loop will iterate once per game round.
             try {
                 if (rc.isCoreReady()) {
-                    if ( taskStatus != RobotTasks.TASK_IN_PROGRESS ) {
-                        assignment = AssignmentManager.getAssignment(rc, rand);
-                        taskStatus = RobotTasks.TASK_IN_PROGRESS;
+
+                    mapInfo.updateSelf(rc);
+
+                    if (mapInfo.urgentSignal != null){
+                        assignment = AssignmentManager.getSignalAssignment(rc, mapInfo, mapInfo.urgentSignal, assignment);
+                        rc.setIndicatorString(0, "Responding to signal");
+                    } else if ( taskStatus != RobotTasks.TASK_IN_PROGRESS ) {
+                        assignment = AssignmentManager.getAssignment(rc, rand, mapInfo);
                         rc.setIndicatorString(0, "Received a task");
-                    } else {
-                        taskStatus = RobotTasks.pursueTask(rc, assignment);
+                    }
+                    taskStatus = RobotTasks.pursueTask(rc, mapInfo, assignment);
+                    if (myType == RobotType.ARCHON && rc.getRoundNum() % 10 == 0) {
+                        rc.broadcastSignal(1000);
                     }
                 }
                 Clock.yield();

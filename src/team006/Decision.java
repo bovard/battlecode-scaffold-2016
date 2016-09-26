@@ -17,4 +17,12 @@ public class Decision {
             return false;
         }
     }
+
+    public static boolean doRunAway(RobotController rc, MapInfo mapInfo) {
+        if ( rc.senseHostileRobots(mapInfo.selfLoc, mapInfo.selfSenseRadius).length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
