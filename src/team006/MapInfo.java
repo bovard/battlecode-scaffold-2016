@@ -2,10 +2,7 @@ package team006;
 
 import battlecode.common.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by andrewalbers on 9/25/16.
@@ -15,10 +12,14 @@ public class MapInfo {
     public Map<Integer, MapLocation> archonLocations = new HashMap<>();
     public ArrayList<MapLocation> enemyLocations = new ArrayList<>();
     public int roundNum = 0;
+    public Map<Integer, Integer> scoutSignals = new HashMap<>(); // <scoutId : roundLastSignaled>
     public RobotType selfType = null;
     public Team selfTeam = null;
+    public int selfId;
     public int selfSenseRadiusSq = 0;
+    public int selfAttackRadiusSq = 0;
     public double selfWeaponDelay = 0;
+    public int cyclesSinceSignaling = 0;
     public MapLocation selfLoc = null;
     public Signal urgentSignal = null;
     public int[] spawnSchedule = null;
@@ -27,7 +28,9 @@ public class MapInfo {
     public MapInfo(RobotController rc) {
         spawnSchedule = rc.getZombieSpawnSchedule().getRounds();
         selfType = rc.getType();
+        selfId = rc.getID();
         selfSenseRadiusSq = selfType.sensorRadiusSquared;
+        selfAttackRadiusSq = selfType.attackRadiusSquared;
     }
 
     public void updateAll(RobotController rc) {
@@ -65,15 +68,24 @@ public class MapInfo {
                         urgentSignal = signal;
                     } else if (message[0] == SignalManager.SIG_UPDATE_ARCHON_LOC) {
                         newArchonPositions.put(signal.getID(),signal.getLocation());
-                    }
-                } else {
-                    if (enemyLocations.contains(thisLocation) == false) {
-                        enemyLocations.add(thisLocation);
-                        rc.setIndicatorString(4, "adding location " + thisLocation.x + " " + thisLocation.y);
+                    } else if (message[0] == SignalManager.SIG_SCOUT) {
+                        scoutSignals.put(signal.getRobotID(),roundNum);
                     }
                 }
             }
         }
+
+        if (selfType == RobotType.ARCHON) {
+            // stop recording last signals from scouts that are probably dead
+            for (Iterator<Map.Entry<Integer, Integer>> it = scoutSignals.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<Integer, Integer> entry = it.next();
+                if (roundNum - entry.getValue() > 50) {
+                    it.remove();
+                }
+            }
+        }
+
+
         if (newArchonPositions.size() > 0) {
             archonLocations = newArchonPositions;
         }

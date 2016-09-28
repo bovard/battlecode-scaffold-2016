@@ -3,6 +3,7 @@ package team006;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
+import battlecode.common.RobotInfo;
 
 /**
  * Created by andrewalbers on 9/14/16.
@@ -10,11 +11,21 @@ import battlecode.common.RobotController;
 public class SignalManager {
     public static int SIG_ASSIST = 1;
     public static int SIG_UPDATE_ARCHON_LOC = 2;
+    public static int SIG_SCOUT = 3;
 
     public static void requestHelp(RobotController rc, MapLocation location) {
         try {
             MapLocation rcLoc = rc.getLocation();
             rc.broadcastMessageSignal(SIG_ASSIST, encodeLocation(rcLoc, location), 10000);
+        } catch (GameActionException gae) {
+            System.out.println(gae.getMessage());
+            gae.printStackTrace();
+        }
+    }
+
+    public static void scoutEnemies(RobotController rc, MapInfo mapInfo, RobotInfo[] enemies) {
+        try {
+            rc.broadcastMessageSignal(SIG_SCOUT, enemies.length, 10000);
         } catch (GameActionException gae) {
             System.out.println(gae.getMessage());
             gae.printStackTrace();

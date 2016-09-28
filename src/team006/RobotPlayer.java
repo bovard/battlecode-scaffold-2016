@@ -41,6 +41,7 @@ public class RobotPlayer {
                     if (mapInfo.selfType == RobotType.ARCHON && rc.getRoundNum() % 10 == 0) {
                         rc.broadcastSignal(1000);
                     }
+                    rc.setIndicatorString(2, "Task status: " + taskStatus);
                 }
                 Clock.yield();
             } catch (Exception e) {

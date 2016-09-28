@@ -29,9 +29,9 @@ public class Decision {
     // return index of robot type to build from Constants.ROBOT_TYPES
     public static int botToBuild(RobotController rc, MapInfo mapInfo) {
         if (mapInfo.timeTillSpawn < 80) {
-            return 2;
-        } else if (rand.nextInt(16) == 15) {
-            return 0;
+            return 2; // build guards if zombies to spawn soon
+        } else if (mapInfo.scoutSignals.size() < 3) {
+            return 0; // build scouts if falling behind on scout messages
         } else if (rand.nextInt(16) == 15) {
             return 4;
         }

@@ -17,6 +17,7 @@ public class AssignmentManager {
     public static int BOT_RETREAT_TO_NEAREST_ARCHON = 7;
     public static int BOT_PATROL = 8;
     public static int BOT_TURRET_DEFEND = 9;
+    public static int BOT_SCOUT = 10;
 
     public static Assignment getAssignment(RobotController rc, Random rand, MapInfo mapInfo) {
 
@@ -53,9 +54,9 @@ public class AssignmentManager {
 
         } else if ( rc.getType() == RobotType.SCOUT ){
 
-            assignmentType = BOT_PATROL;
+            assignmentType = BOT_SCOUT;
             MapLocation rcLoc = rc.getLocation();
-            targetLocation = new MapLocation(rcLoc.x + rand.nextInt(21) - 10, rcLoc.y + rand.nextInt(21) - 10);
+            targetLocation = new MapLocation(rcLoc.x + rand.nextInt(1001) - 500, rcLoc.y + rand.nextInt(1001) - 500);
 
         } else if ( rc.getType() == RobotType.VIPER ){
 
