@@ -13,6 +13,7 @@ public class MapInfo {
     public ArrayList<MapLocation> enemyLocations = new ArrayList<>();
     public int roundNum = 0;
     public Map<Integer, Integer> scoutSignals = new HashMap<>(); // <scoutId : roundLastSignaled>
+    public int selfScoutsCreated = 0;
     public RobotType selfType = null;
     public Team selfTeam = null;
     public int selfId;
@@ -104,5 +105,9 @@ public class MapInfo {
             }
         }
         return nearestLocation;
+    }
+
+    public void incrementScoutsCreated() {
+        selfScoutsCreated = selfScoutsCreated +1;
     }
 }

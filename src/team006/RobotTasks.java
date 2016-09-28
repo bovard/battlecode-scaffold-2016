@@ -341,6 +341,9 @@ public class RobotTasks {
                     // If possible, build in this direction
                     if (rc.canBuild(dirToBuild, typeToBuild)) {
                         rc.build(dirToBuild, typeToBuild);
+                        if (typeToBuild == RobotType.SCOUT){
+                            mapInfo.incrementScoutsCreated();
+                        }
                         return TASK_COMPLETE;
                     } else {
                         // Rotate the direction to try
