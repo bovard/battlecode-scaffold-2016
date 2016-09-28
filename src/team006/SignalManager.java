@@ -9,11 +9,12 @@ import battlecode.common.RobotController;
  */
 public class SignalManager {
     public static int SIG_ASSIST = 1;
+    public static int SIG_UPDATE_ARCHON_LOC = 2;
 
     public static void requestHelp(RobotController rc, MapLocation location) {
         try {
             MapLocation rcLoc = rc.getLocation();
-            rc.broadcastMessageSignal(SIG_ASSIST, encodeLocation(rcLoc, location), 100);
+            rc.broadcastMessageSignal(SIG_ASSIST, encodeLocation(rcLoc, location), 10000);
         } catch (GameActionException gae) {
             System.out.println(gae.getMessage());
             gae.printStackTrace();

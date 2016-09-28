@@ -19,10 +19,22 @@ public class Decision {
     }
 
     public static boolean doRunAway(RobotController rc, MapInfo mapInfo) {
-        if ( rc.senseHostileRobots(mapInfo.selfLoc, mapInfo.selfSenseRadius).length > 0) {
+        if ( rc.senseHostileRobots(mapInfo.selfLoc, mapInfo.selfSenseRadiusSq).length > 0) {
             return true;
         } else {
             return false;
         }
+    }
+
+    // return index of robot type to build from Constants.ROBOT_TYPES
+    public static int botToBuild(RobotController rc, MapInfo mapInfo) {
+        if (mapInfo.timeTillSpawn < 80) {
+            return 2;
+        } else if (rand.nextInt(16) == 15) {
+            return 0;
+        } else if (rand.nextInt(16) == 15) {
+            return 4;
+        }
+        return 1;
     }
 }

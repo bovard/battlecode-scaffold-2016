@@ -12,11 +12,6 @@ public class RobotPlayer {
      **/
     @SuppressWarnings("unused")
     public static void run(RobotController rc) {
-        // You can instantiate variables here.
-        Direction[] directions = {Direction.NORTH, Direction.NORTH_EAST, Direction.EAST, Direction.SOUTH_EAST,
-                Direction.SOUTH, Direction.SOUTH_WEST, Direction.WEST, Direction.NORTH_WEST};
-        RobotType[] robotTypes = {RobotType.SCOUT, RobotType.SOLDIER, RobotType.SOLDIER, RobotType.SOLDIER,
-                RobotType.GUARD, RobotType.GUARD, RobotType.VIPER, RobotType.TURRET};
 
         Random rand = new Random(rc.getID());
 
@@ -25,7 +20,6 @@ public class RobotPlayer {
         int taskStatus = RobotTasks.TASK_NOT_GIVEN;
         Assignment assignment = null;
 
-        RobotType myType = rc.getType();
         MapInfo mapInfo = new MapInfo(rc);
 
         while (true) {
@@ -34,7 +28,7 @@ public class RobotPlayer {
             try {
                 if (rc.isCoreReady()) {
 
-                    mapInfo.updateSelf(rc);
+                    mapInfo.updateAll(rc);
 
                     if (mapInfo.urgentSignal != null){
                         assignment = AssignmentManager.getSignalAssignment(rc, mapInfo, mapInfo.urgentSignal, assignment);
@@ -44,7 +38,7 @@ public class RobotPlayer {
                         rc.setIndicatorString(0, "Received a task");
                     }
                     taskStatus = RobotTasks.pursueTask(rc, mapInfo, assignment);
-                    if (myType == RobotType.ARCHON && rc.getRoundNum() % 10 == 0) {
+                    if (mapInfo.selfType == RobotType.ARCHON && rc.getRoundNum() % 10 == 0) {
                         rc.broadcastSignal(1000);
                     }
                 }
