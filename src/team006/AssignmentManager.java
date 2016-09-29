@@ -81,7 +81,7 @@ public class AssignmentManager {
         int targetInt = 0;
         MapLocation targetLocation;
 
-        if (message[0] == SignalManager.SIG_ASSIST) {
+        if (message == null || message[0] == SignalManager.SIG_ASSIST) {
             if (mapInfo.selfType == RobotType.SOLDIER || mapInfo.selfType == RobotType.GUARD) {
                 assignmentType = BOT_ATTACK_MOVE_TO_LOC;
                 targetLocation = SignalManager.decodeLocation(signal.getLocation(),message[1]);

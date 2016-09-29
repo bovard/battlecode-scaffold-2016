@@ -20,7 +20,7 @@ public class MapInfo {
     public int selfSenseRadiusSq = 0;
     public int selfAttackRadiusSq = 0;
     public double selfWeaponDelay = 0;
-    public int cyclesSinceSignaling = 0;
+    public int selfLastSignaled = 0;
     public MapLocation selfLoc = null;
     public Signal urgentSignal = null;
     public int[] spawnSchedule = null;
@@ -60,18 +60,23 @@ public class MapInfo {
 
         // Process Signals
         MapLocation thisLocation;
+        int minUrgentDist = 9999999;
         for (Signal signal : signals){
             if (signal.getTeam() == selfTeam) {
                 thisLocation = signal.getLocation();
                 int[] message = signal.getMessage();
                 if (message != null) {
                     if (message[0] == SignalManager.SIG_ASSIST) {
-                        urgentSignal = signal;
+                        // set urgent signal to this if it's the closest
+                        minUrgentDist = setUrgentSignal(minUrgentDist, thisLocation, signal);
                     } else if (message[0] == SignalManager.SIG_UPDATE_ARCHON_LOC) {
                         newArchonPositions.put(signal.getID(),signal.getLocation());
                     } else if (message[0] == SignalManager.SIG_SCOUT) {
                         scoutSignals.put(signal.getRobotID(),roundNum);
                     }
+                } else {
+                    // set urgent signal to this if it's the closest
+                    minUrgentDist = setUrgentSignal(minUrgentDist, thisLocation, signal);
                 }
             }
         }
@@ -107,7 +112,13 @@ public class MapInfo {
         return nearestLocation;
     }
 
-    public void incrementScoutsCreated() {
-        selfScoutsCreated = selfScoutsCreated +1;
+    public int setUrgentSignal(int minDist, MapLocation location, Signal signal) {
+        int distToSignal = selfLoc.distanceSquaredTo(location);
+        if (distToSignal < minDist) {
+            urgentSignal = signal;
+            return distToSignal;
+        } else {
+            return minDist;
+        }
     }
 }

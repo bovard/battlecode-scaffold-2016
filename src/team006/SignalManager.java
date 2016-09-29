@@ -1,9 +1,6 @@
 package team006;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
-import battlecode.common.RobotInfo;
+import battlecode.common.*;
 
 /**
  * Created by andrewalbers on 9/14/16.
@@ -13,10 +10,22 @@ public class SignalManager {
     public static int SIG_UPDATE_ARCHON_LOC = 2;
     public static int SIG_SCOUT = 3;
 
-    public static void requestHelp(RobotController rc, MapLocation location) {
+    public static void requestHelp(RobotController rc, MapInfo mapInfo, MapLocation location) {
         try {
-            MapLocation rcLoc = rc.getLocation();
-            rc.broadcastMessageSignal(SIG_ASSIST, encodeLocation(rcLoc, location), 10000);
+            if (mapInfo.selfType == RobotType.ARCHON) {
+                rc.broadcastMessageSignal(SIG_ASSIST, encodeLocation(mapInfo.selfLoc, location), 1000);
+            } else {
+                rc.broadcastSignal(100);
+            }
+        } catch (GameActionException gae) {
+            System.out.println(gae.getMessage());
+            gae.printStackTrace();
+        }
+    }
+
+    public static void signalArchonLoc(RobotController rc, MapInfo mapInfo) {
+        try {
+            rc.broadcastMessageSignal(SIG_UPDATE_ARCHON_LOC, encodeLocation(mapInfo.selfLoc, mapInfo.selfLoc), 1000);
         } catch (GameActionException gae) {
             System.out.println(gae.getMessage());
             gae.printStackTrace();
@@ -25,7 +34,7 @@ public class SignalManager {
 
     public static void scoutEnemies(RobotController rc, MapInfo mapInfo, RobotInfo[] enemies) {
         try {
-            rc.broadcastMessageSignal(SIG_SCOUT, enemies.length, 10000);
+            rc.broadcastMessageSignal(SIG_SCOUT, enemies.length, 1000);
         } catch (GameActionException gae) {
             System.out.println(gae.getMessage());
             gae.printStackTrace();
