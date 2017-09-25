@@ -80,15 +80,6 @@
       </filterchain>
     </loadfile>
 
-    <!-- Manually update ivy.xml, setting the battlecode versions to ${bc.version}. 
-         Yes, it's horrible.
-         This is necessary because of limitations in the battlecode package repository;
-         it will be cleaner next year. -->
-    <replaceregexp file="ivy.xml" flags="g">
-      <regexp pattern="name=&quot;battlecode(-javadoc|-mapeditor)?&quot;(\s+)rev=&quot;[^&quot;]+&quot;"/>
-      <substitution expression="name=&quot;battlecode\1&quot;\2rev=&quot;${bc.version}&quot;"/>
-    </replaceregexp>
-
     <!-- Re-download all of our dependencies. -->
     <delete dir="${path.lib}"/>
     <mkdir dir="${path.lib}"/>
