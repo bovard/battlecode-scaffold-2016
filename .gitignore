@@ -21,3 +21,6 @@ bin/
 *.bak
 *.swp
 *~
+
+# IntelliJ files
+.idea
